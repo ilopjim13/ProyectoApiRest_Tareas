@@ -103,7 +103,7 @@ fun ListItem(tarea:Tarea) {
 
                 Checkbox(
                     checked = tarea.estado,
-                    onCheckedChange = { /* Aquí maneja el cambio de estado del checkbox */ }
+                    onCheckedChange = {  }
                 )
 
                 IconButton(onClick = {}) {
