@@ -26,7 +26,7 @@ fun AppTareas(modifier:Modifier = Modifier, navigationController: NavHostControl
         startDestination = Login
     ) {
         composable<Login> {
-            LoginScreen(modifier, context, usuarioViewModel, navigationController)
+            LoginScreen(modifier, context, usuarioViewModel, tareaViewModel, navigationController)
         }
         composable<Registro> {
             RegistroScreen(navigationController)

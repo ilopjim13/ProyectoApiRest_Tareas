@@ -9,13 +9,6 @@ class UsuarioViewModel(private val tareaViewModel: TareaViewModel) {
 
     var usuario: Usuario = Usuario("", "", "")
 
-    private val _token = mutableStateOf("")
-    val token:State<String> = _token
-
-    fun takeToken(token:String) {
-        _token.value = token
-    }
-
     suspend fun getUser(token:String) {
         val user = retrofitService.getUser("Bearer $token")
         if (user.isSuccessful) {

@@ -17,6 +17,7 @@ import com.example.proyectoapirest_tareas.model.Tarea
 import com.example.proyectoapirest_tareas.dto.LoginUsuarioDTO
 import com.example.proyectoapirest_tareas.navigation.AppTareas
 import com.example.proyectoapirest_tareas.ui.theme.ProyectoApiRest_TareasTheme
+import com.example.proyectoapirest_tareas.viewmodel.TareaViewModel
 import com.example.proyectoapirest_tareas.viewmodel.UsuarioViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -52,7 +53,7 @@ class MainActivity : ComponentActivity() {
 }
 
 
-fun getToken(username:String, pass:String, context: Context,usuarioViewModel: UsuarioViewModel, onLog:() -> Unit ) {
+fun getToken(username:String, pass:String, context: Context,usuarioViewModel:UsuarioViewModel,tareaViewModel: TareaViewModel, onLog:() -> Unit ) {
     CoroutineScope(Dispatchers.IO).launch {
         val auth = retrofitService.login(LoginUsuarioDTO(username, pass))
         if(auth.isSuccessful) {
@@ -61,7 +62,7 @@ fun getToken(username:String, pass:String, context: Context,usuarioViewModel: Us
                 saveToken(token, context) // Guardar el token de forma segura
                 Log.d("Login", "Token recibido: $token")
                 onLog()
-                usuarioViewModel.takeToken(token)
+                tareaViewModel.takeToken(token)
                 usuarioViewModel.getUser(token)
             } else {
                 Log.e("Login", "El token es nulo")

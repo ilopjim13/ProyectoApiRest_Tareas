@@ -23,11 +23,12 @@ import androidx.navigation.NavController
 import com.example.proyectoapirest_tareas.getToken
 import com.example.proyectoapirest_tareas.navigation.Registro
 import com.example.proyectoapirest_tareas.navigation.Tareas
+import com.example.proyectoapirest_tareas.viewmodel.TareaViewModel
 import com.example.proyectoapirest_tareas.viewmodel.UsuarioViewModel
 
 
 @Composable
-fun LoginScreen(modifier: Modifier = Modifier, context: Context, usuarioViewModel:UsuarioViewModel, navHostController: NavController) {
+fun LoginScreen(modifier: Modifier = Modifier, context: Context, usuarioViewModel:UsuarioViewModel, tareaViewModel: TareaViewModel, navHostController: NavController) {
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var logeado by remember { mutableStateOf(false) }
@@ -52,7 +53,7 @@ fun LoginScreen(modifier: Modifier = Modifier, context: Context, usuarioViewMode
         Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween) {
             Button(onClick = {
                 if (username.isNotBlank() && password.isNotBlank()) {
-                    getToken(username, password, context, usuarioViewModel) {logeado = true}
+                    getToken(username, password, context, usuarioViewModel, tareaViewModel) {logeado = true}
                     navHostController.navigate(Tareas)
                 }
             }) {

@@ -6,6 +6,6 @@ data class Tarea(
     val titulo:String,
     val descripcion:String,
     val fecha:Date,
-    val estado:Boolean,
+    var estado:Boolean,
     val creador:String
 )
