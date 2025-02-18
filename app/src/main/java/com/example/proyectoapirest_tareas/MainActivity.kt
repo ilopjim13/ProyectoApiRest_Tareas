@@ -16,8 +16,8 @@ import com.example.proyectoapirest_tareas.api.Api.retrofitService
 import com.example.proyectoapirest_tareas.model.Tarea
 import com.example.proyectoapirest_tareas.dto.LoginUsuarioDTO
 import com.example.proyectoapirest_tareas.navigation.AppTareas
-import com.example.proyectoapirest_tareas.screen.LoginScreen
 import com.example.proyectoapirest_tareas.ui.theme.ProyectoApiRest_TareasTheme
+import com.example.proyectoapirest_tareas.viewmodel.UsuarioViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -37,17 +37,6 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private fun getTareas() {
-        CoroutineScope(Dispatchers.IO).launch {
-            val tareas = retrofitService.getAllTasks()
-
-            if (tareas.isSuccessful) {
-                allTareas = tareas.body() ?: emptyList()
-            }
-        }
-
-    }
-
     private fun showError() {
         runOnUiThread {
             Toast.makeText(this, "Error al hacer la llamada", Toast.LENGTH_SHORT).show()
@@ -63,7 +52,7 @@ class MainActivity : ComponentActivity() {
 }
 
 
-fun getToken(username:String, pass:String, context: Context, onLog:() -> Unit ) {
+fun getToken(username:String, pass:String, context: Context,usuarioViewModel: UsuarioViewModel, onLog:() -> Unit ) {
     CoroutineScope(Dispatchers.IO).launch {
         val auth = retrofitService.login(LoginUsuarioDTO(username, pass))
         if(auth.isSuccessful) {
@@ -72,6 +61,8 @@ fun getToken(username:String, pass:String, context: Context, onLog:() -> Unit ) 
                 saveToken(token, context) // Guardar el token de forma segura
                 Log.d("Login", "Token recibido: $token")
                 onLog()
+                usuarioViewModel.takeToken(token)
+                usuarioViewModel.getUser(token)
             } else {
                 Log.e("Login", "El token es nulo")
             }

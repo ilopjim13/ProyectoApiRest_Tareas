@@ -22,10 +22,12 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.proyectoapirest_tareas.getToken
 import com.example.proyectoapirest_tareas.navigation.Registro
+import com.example.proyectoapirest_tareas.navigation.Tareas
+import com.example.proyectoapirest_tareas.viewmodel.UsuarioViewModel
 
 
 @Composable
-fun LoginScreen(modifier: Modifier = Modifier, context: Context, navHostController: NavController) {
+fun LoginScreen(modifier: Modifier = Modifier, context: Context, usuarioViewModel:UsuarioViewModel, navHostController: NavController) {
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var logeado by remember { mutableStateOf(false) }
@@ -50,7 +52,8 @@ fun LoginScreen(modifier: Modifier = Modifier, context: Context, navHostControll
         Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween) {
             Button(onClick = {
                 if (username.isNotBlank() && password.isNotBlank()) {
-                    getToken(username, password, context) {logeado = true}
+                    getToken(username, password, context, usuarioViewModel) {logeado = true}
+                    navHostController.navigate(Tareas)
                 }
             }) {
                 Text("LOGEARSER")
@@ -61,8 +64,5 @@ fun LoginScreen(modifier: Modifier = Modifier, context: Context, navHostControll
                 Text("REGISTRARSE")
             }
         }
-
-
-        if (logeado) Text("BIEEEN CRACCKKKK")
     }
 }

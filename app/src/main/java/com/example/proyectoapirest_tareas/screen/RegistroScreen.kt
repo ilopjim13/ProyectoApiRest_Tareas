@@ -19,7 +19,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import com.example.proyectoapirest_tareas.api.Api.retrofitService
 import com.example.proyectoapirest_tareas.dto.UsuarioRegisterDTO
@@ -27,7 +26,6 @@ import com.example.proyectoapirest_tareas.model.Direccion
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import retrofit2.Retrofit
 
 @Composable
 fun RegistroScreen(navController: NavHostController) {

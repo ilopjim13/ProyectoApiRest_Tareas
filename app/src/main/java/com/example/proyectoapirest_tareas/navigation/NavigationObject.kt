@@ -6,3 +6,5 @@ import kotlinx.serialization.Serializable
 object Login
 @Serializable
 object Registro
+@Serializable
+object Tareas
