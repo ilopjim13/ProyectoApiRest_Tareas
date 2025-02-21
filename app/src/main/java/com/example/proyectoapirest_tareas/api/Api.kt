@@ -35,7 +35,7 @@ object Api {
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val auth = retrofitService.login(LoginUsuarioDTO(username, pass))
-                if(auth.isSuccessful) {
+                if(auth.isSuccessful && auth.errorBody() == null) {
                     val token = auth.body()?.token
                     if (token != null) {
                         Log.d("Login", "Token recibido: $token")
@@ -59,12 +59,16 @@ object Api {
     }
 
 
-    fun onRegisterClick(usuario: UsuarioRegisterDTO, onDismiss:(String)-> Unit) {
+    fun onRegisterClick(usuario: UsuarioRegisterDTO, onDismiss:(String)-> Unit):Boolean {
+        var registrado = false
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val usuarioBD = retrofitService.register(usuario)
-                if (usuarioBD.isSuccessful) {
-                    Log.e("REGISTER", "COMPLETADOOOOOOOO")
+                if (usuarioBD.isSuccessful && usuarioBD.errorBody() == null) {
+                    Log.d("REGISTER", "El usuario ${usuario.username} ha sido registrado")
+                    withContext(Dispatchers.Main) {
+                        registrado = true
+                    }
                 } else {
                     val error = usuarioBD.errorBody()?.string()
                     Log.e("ErrorRegistro", "ERROR de Registro. $error")
@@ -75,8 +79,8 @@ object Api {
                     onDismiss(e.message.toString())
                 }
             }
-
         }
+        return registrado
     }
 
     fun save(tareasSinGuardar:List<Tarea>, tareas:List<Tarea>, token:String) {

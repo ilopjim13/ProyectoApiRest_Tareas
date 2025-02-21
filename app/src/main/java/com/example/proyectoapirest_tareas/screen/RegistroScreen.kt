@@ -66,10 +66,10 @@ fun RegistroScreen(navController: NavHostController, usuarioViewModel: UsuarioVi
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        OutlinedTextField(value = username, onValueChange = { username = it }, label = { Text("Usuario") })
-        OutlinedTextField(value = email, onValueChange = { email = it }, label = { Text("Email") })
-        OutlinedTextField(value = password, onValueChange = { password = it }, label = { Text("Contraseña") }, visualTransformation = PasswordVisualTransformation())
-        OutlinedTextField(value = passwordRepeat, onValueChange = { passwordRepeat = it }, label = { Text("Repetir Contraseña") }, visualTransformation = PasswordVisualTransformation())
+        OutlinedTextField(value = username, onValueChange = { username = it }, singleLine = true, label = { Text("Usuario") })
+        OutlinedTextField(value = email, onValueChange = { email = it }, singleLine = true, label = { Text("Email") })
+        OutlinedTextField(value = password, onValueChange = { password = it }, singleLine = true, label = { Text("Contraseña") }, visualTransformation = PasswordVisualTransformation())
+        OutlinedTextField(value = passwordRepeat, onValueChange = { passwordRepeat = it }, singleLine = true, label = { Text("Repetir Contraseña") }, visualTransformation = PasswordVisualTransformation())
 
         ExposedDropdownMenuBox(
             expanded = expanded,
@@ -101,11 +101,11 @@ fun RegistroScreen(navController: NavHostController, usuarioViewModel: UsuarioVi
                 }
             }
         }
-        OutlinedTextField(value = calle, onValueChange = { calle = it }, label = { Text("Calle") })
-        OutlinedTextField(value = num, onValueChange = { num = it }, label = { Text("Número") })
-        OutlinedTextField(value = municipio, onValueChange = { municipio = it }, label = { Text("Municipio") })
-        OutlinedTextField(value = provincia, onValueChange = { provincia = it }, label = { Text("Provincia") })
-        OutlinedTextField(value = cp, onValueChange = { cp = it }, label = { Text("Código Postal") })
+        OutlinedTextField(value = calle, onValueChange = { calle = it }, singleLine = true, label = { Text("Calle") })
+        OutlinedTextField(value = num, onValueChange = { num = it }, singleLine = true, label = { Text("Número") })
+        OutlinedTextField(value = municipio, onValueChange = { municipio = it }, singleLine = true, label = { Text("Municipio") })
+        OutlinedTextField(value = provincia, onValueChange = { provincia = it }, singleLine = true, label = { Text("Provincia") })
+        OutlinedTextField(value = cp, onValueChange = { cp = it }, singleLine = true, label = { Text("Código Postal") })
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -114,15 +114,16 @@ fun RegistroScreen(navController: NavHostController, usuarioViewModel: UsuarioVi
                 val direccion = Direccion(calle, num, municipio, provincia, cp)
                 val usuario = UsuarioRegisterDTO(username, email, password, passwordRepeat, rol, direccion)
                 if (usuarioViewModel.checkUser(usuario)) {
-                    onRegisterClick(usuario) {
+                    if (onRegisterClick(usuario) {
                         error = true
                         message = it
-                    }
-                    navController.popBackStack()
+                    })navController.popBackStack()
+
+
                 }
                 else {
                     error = true
-                    message = "Error en los campos introducidos."
+                    message = "Error en los campos introducidos. Comprueba que todos los datos estén introducidos, el email sea correcto, y la contraseña sea mayor o igual a 4 dígitos"
                 }
             }) {
                 Text("Registrarse")

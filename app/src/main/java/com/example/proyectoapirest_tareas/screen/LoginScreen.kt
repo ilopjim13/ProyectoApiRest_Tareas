@@ -68,9 +68,12 @@ fun LoginScreen(modifier: Modifier = Modifier,usuarioViewModel:UsuarioViewModel,
                         error = true
                         message = it
                     }
+                } else {
+                    error = true
+                    message = "Debes rellenar los campos."
                 }
             }) {
-                Text("LOGEARSER")
+                Text("INICIAR SESIÓN")
             }
             Button(onClick = {
                 navHostController.navigate(Registro)

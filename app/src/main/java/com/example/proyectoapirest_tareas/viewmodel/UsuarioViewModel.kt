@@ -43,7 +43,7 @@ class UsuarioViewModel(private val tareaViewModel: TareaViewModel) {
         if (user.direccion.calle.isBlank() || user.direccion.num.isBlank() || user.direccion.municipio.isBlank() || user.direccion.provincia.isBlank() || user.direccion.cp.isBlank())
             return false
 
-        return Patterns.EMAIL_ADDRESS.matcher(user.email).matches() && user.password.length > 5 && user.password == user.passwordRepeat
+        return Patterns.EMAIL_ADDRESS.matcher(user.email).matches() && user.password.length > 3
     }
 
 }
