@@ -1,6 +1,5 @@
 package com.example.proyectoapirest_tareas.navigation
 
-import android.content.Context
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -16,7 +15,7 @@ import com.example.proyectoapirest_tareas.viewmodel.TareaViewModel
 import com.example.proyectoapirest_tareas.viewmodel.UsuarioViewModel
 
 @Composable
-fun AppTareas(modifier:Modifier = Modifier, navigationController: NavHostController,context: Context) {
+fun AppTareas(modifier:Modifier = Modifier, navigationController: NavHostController) {
 
     val tareaViewModel by remember { mutableStateOf(TareaViewModel()) }
     val usuarioViewModel by remember { mutableStateOf(UsuarioViewModel(tareaViewModel)) }
@@ -26,14 +25,13 @@ fun AppTareas(modifier:Modifier = Modifier, navigationController: NavHostControl
         startDestination = Login
     ) {
         composable<Login> {
-            LoginScreen(modifier, context, usuarioViewModel, tareaViewModel, navigationController)
+            LoginScreen(modifier, usuarioViewModel, tareaViewModel, navigationController)
         }
         composable<Registro> {
-            RegistroScreen(navigationController)
+            RegistroScreen(navigationController, usuarioViewModel)
         }
         composable<Tareas> {
             TareasScreen(usuarioViewModel, tareaViewModel)
         }
     }
 }
-//startDestination = if (usuarioActivo == null) "Portada" else "Menu"

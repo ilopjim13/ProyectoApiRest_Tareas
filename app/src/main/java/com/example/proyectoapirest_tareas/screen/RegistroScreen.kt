@@ -1,13 +1,20 @@
 package com.example.proyectoapirest_tareas.screen
 
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.Button
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -20,25 +27,37 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.example.proyectoapirest_tareas.api.Api.retrofitService
+import com.example.proyectoapirest_tareas.api.Api.onRegisterClick
 import com.example.proyectoapirest_tareas.dto.UsuarioRegisterDTO
+import com.example.proyectoapirest_tareas.error.ErrorDialog
 import com.example.proyectoapirest_tareas.model.Direccion
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import com.example.proyectoapirest_tareas.viewmodel.UsuarioViewModel
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RegistroScreen(navController: NavHostController) {
+fun RegistroScreen(navController: NavHostController, usuarioViewModel: UsuarioViewModel) {
     var username by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var passwordRepeat by remember { mutableStateOf("") }
-    var rol by remember { mutableStateOf("") }
+    var rol by remember { mutableStateOf("USER") }
     var calle by remember { mutableStateOf("") }
     var num by remember { mutableStateOf("") }
     var municipio by remember { mutableStateOf("") }
     var provincia by remember { mutableStateOf("") }
     var cp by remember { mutableStateOf("") }
+    var expanded by remember { mutableStateOf(false) }
+    val roles = listOf("USER", "ADMIN")
+    var error by remember { mutableStateOf(false) }
+    var message by remember { mutableStateOf("") }
+
+
+    if(error) {
+        ErrorDialog("Error de Registro: $message") {
+            error = false
+            message = ""
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -51,7 +70,37 @@ fun RegistroScreen(navController: NavHostController) {
         OutlinedTextField(value = email, onValueChange = { email = it }, label = { Text("Email") })
         OutlinedTextField(value = password, onValueChange = { password = it }, label = { Text("Contraseña") }, visualTransformation = PasswordVisualTransformation())
         OutlinedTextField(value = passwordRepeat, onValueChange = { passwordRepeat = it }, label = { Text("Repetir Contraseña") }, visualTransformation = PasswordVisualTransformation())
-        OutlinedTextField(value = rol, onValueChange = { rol = it }, label = { Text("Rol") })
+
+        ExposedDropdownMenuBox(
+            expanded = expanded,
+            onExpandedChange = { expanded = !expanded }
+        ) {
+            OutlinedTextField(
+                value = rol,
+                onValueChange = {},
+                readOnly = true,
+                label = { Text("Rol") },
+                trailingIcon = {
+                    Icon(Icons.Default.ArrowDropDown, contentDescription = "Desplegar")
+                },
+                modifier = Modifier.menuAnchor()
+            )
+
+            ExposedDropdownMenu(
+                expanded = expanded,
+                onDismissRequest = { expanded = false }
+            ) {
+                roles.forEach { option ->
+                    DropdownMenuItem(
+                        text = { Text(option) },
+                        onClick = {
+                            rol = option
+                            expanded = false
+                        }
+                    )
+                }
+            }
+        }
         OutlinedTextField(value = calle, onValueChange = { calle = it }, label = { Text("Calle") })
         OutlinedTextField(value = num, onValueChange = { num = it }, label = { Text("Número") })
         OutlinedTextField(value = municipio, onValueChange = { municipio = it }, label = { Text("Municipio") })
@@ -60,27 +109,30 @@ fun RegistroScreen(navController: NavHostController) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        Button(onClick = {
-            val direccion = Direccion(calle, num, municipio, provincia, cp)
-            val usuario = UsuarioRegisterDTO(username, email, password, passwordRepeat, rol, direccion)
-            onRegisterClick(usuario)
-        }) {
-            Text("Registrarse")
+        Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceEvenly) {
+            Button(onClick = {
+                val direccion = Direccion(calle, num, municipio, provincia, cp)
+                val usuario = UsuarioRegisterDTO(username, email, password, passwordRepeat, rol, direccion)
+                if (usuarioViewModel.checkUser(usuario)) {
+                    onRegisterClick(usuario) {
+                        error = true
+                        message = it
+                    }
+                    navController.popBackStack()
+                }
+                else {
+                    error = true
+                    message = "Error en los campos introducidos."
+                }
+            }) {
+                Text("Registrarse")
+            }
+            Button(onClick = {navController.popBackStack()}) {
+                Text("Iniciar Sesión")
+            }
         }
 
-        Spacer(modifier = Modifier.height(8.dp))
 
-        Button(onClick = {navController.popBackStack()}) {
-            Text("Iniciar Sesión")
-        }
     }
 }
 
-fun onRegisterClick(usuario: UsuarioRegisterDTO) {
-    CoroutineScope(Dispatchers.IO).launch {
-        val usuarioBD = retrofitService.register(usuario)
-        if (usuarioBD.isSuccessful) {
-            Log.e("REGISTER", "COMPLETADOOOOOOOO")
-        }
-    }
-}
