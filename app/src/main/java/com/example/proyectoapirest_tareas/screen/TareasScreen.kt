@@ -36,6 +36,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.proyectoapirest_tareas.error.ErrorDialog
 import com.example.proyectoapirest_tareas.model.Tarea
 import com.example.proyectoapirest_tareas.viewmodel.TareaViewModel
 import com.example.proyectoapirest_tareas.viewmodel.UsuarioViewModel
@@ -45,11 +46,24 @@ fun TareasScreen(usuarioViewModel: UsuarioViewModel, tareaViewModel: TareaViewMo
 
     val tareas = remember { tareaViewModel.tareas }
     var agregar by remember { mutableStateOf(false) }
+    var error by remember { mutableStateOf(false) }
+    var mensaje by remember { mutableStateOf("") }
+
+    if (error) {
+        ErrorDialog(mensaje) {
+            error = false
+            mensaje = ""
+        }
+    }
 
     if (agregar) {
         AddDialog(onConfirm = { titulo, desc, creador ->
             if (titulo.isNotBlank() && desc.isNotBlank())
-                tareaViewModel.addTask(titulo, desc, creador)
+                tareaViewModel.addTask(titulo, desc, creador,
+                    onDismiss = {
+                        error = true
+                        mensaje = it
+                    })
         }, onDismiss = {agregar = false}, usuarioViewModel)
     }
 

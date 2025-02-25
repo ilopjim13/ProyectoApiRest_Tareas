@@ -7,11 +7,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import com.example.proyectoapirest_tareas.api.Api.retrofitService
 import com.example.proyectoapirest_tareas.dto.TareaAddDTO
+import com.example.proyectoapirest_tareas.error.exceptions.BadRequestException
 import com.example.proyectoapirest_tareas.model.Tarea
 import com.example.proyectoapirest_tareas.model.Usuario
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.Date
 
 class TareaViewModel {
@@ -64,15 +66,25 @@ class TareaViewModel {
         }
     }
 
-    fun addTask(titulo:String, desc:String, creador:String) {
+    fun addTask(titulo:String, desc:String, creador:String, onDismiss:(String) -> Unit) {
         CoroutineScope(Dispatchers.IO).launch {
             val tarea = TareaAddDTO(titulo, desc)
             val existe = tareas.find { titulo == it.titulo && creador == it.creador }
             if (existe == null){
-                val a = retrofitService.addTask("Bearer ${token.value}", creador, tarea)
-                Log.e("TAREAAAAAAA", "Tarea ${a.body()?.titulo}")
-                val tareaNueva = Tarea(titulo, desc, Date(), false, creador)
-                tareas.add(tareaNueva)
+                try {
+                    val t = retrofitService.addTask("Bearer ${token.value}", creador, tarea)
+                    if (t.isSuccessful && t.errorBody() == null) {
+                        Log.e("TAREAAAAAAA", "Tarea ${t.body()?.titulo}")
+                        val tareaNueva = Tarea(titulo, desc, Date(), false, creador)
+                        tareas.add(tareaNueva)
+                    } else {
+                        throw BadRequestException("No puedes añadir tareas de otros")
+                    }
+                } catch (e:Exception) {
+                    withContext(Dispatchers.Main) {
+                        onDismiss(e.message.toString())
+                    }
+                }
             }
         }
     }
