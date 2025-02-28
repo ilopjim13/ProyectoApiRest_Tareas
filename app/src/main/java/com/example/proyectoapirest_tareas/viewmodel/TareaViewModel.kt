@@ -8,6 +8,7 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import com.example.proyectoapirest_tareas.api.Api.retrofitService
 import com.example.proyectoapirest_tareas.dto.TareaAddDTO
 import com.example.proyectoapirest_tareas.error.exceptions.BadRequestException
+import com.example.proyectoapirest_tareas.error.exceptions.NotFoundException
 import com.example.proyectoapirest_tareas.model.Tarea
 import com.example.proyectoapirest_tareas.model.Usuario
 import kotlinx.coroutines.CoroutineScope
@@ -19,7 +20,7 @@ import java.util.Date
 class TareaViewModel {
 
     val tareas: SnapshotStateList<Tarea> = mutableStateListOf()
-    private val tareasSinGuardar: SnapshotStateList<Tarea> = mutableStateListOf()
+    private var tareasSinGuardar: SnapshotStateList<Tarea> = mutableStateListOf()
 
     private val _token = mutableStateOf("")
     private val token: State<String> = _token
@@ -60,7 +61,10 @@ class TareaViewModel {
                     it.estado = tarea?.estado == true
                 }
 
-                if (it !in tareas) retrofitService.deleteTask("Bearer ${token.value}", it.titulo, it.creador)
+                if (it !in tareas) {
+                    retrofitService.deleteTask("Bearer ${token.value}", it.titulo, it.creador)
+                    tareasSinGuardar = tareas
+                }
 
             }
         }
@@ -78,7 +82,12 @@ class TareaViewModel {
                         val tareaNueva = Tarea(titulo, desc, Date(), false, creador)
                         tareas.add(tareaNueva)
                     } else {
-                        throw BadRequestException("No puedes añadir tareas de otros")
+                        val error = t.errorBody()?.string()
+                        Log.e("ErrorDeTarea", "ERROR al agregar la tarea. $error")
+                        if (error != null) {
+                            if(error.contains("400")) throw BadRequestException(error)
+                            else throw NotFoundException(error)
+                        }
                     }
                 } catch (e:Exception) {
                     withContext(Dispatchers.Main) {
