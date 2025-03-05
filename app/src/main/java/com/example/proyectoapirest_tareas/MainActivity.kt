@@ -20,7 +20,6 @@ class MainActivity : ComponentActivity() {
             ProyectoApiRest_TareasTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     AppTareas(modifier = Modifier.padding(innerPadding), rememberNavController())
-                    //LoginScreen(modifier = Modifier.padding(innerPadding),this)
                 }
             }
         }
