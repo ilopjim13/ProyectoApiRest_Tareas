@@ -8,6 +8,7 @@ import com.example.proyectoapirest_tareas.error.exceptions.BadRequestException
 import com.example.proyectoapirest_tareas.error.exceptions.NotFoundException
 import com.example.proyectoapirest_tareas.error.exceptions.UnauthorizedException
 import com.example.proyectoapirest_tareas.model.Tarea
+import com.example.proyectoapirest_tareas.model.Usuario
 import com.example.proyectoapirest_tareas.service.APIService
 import com.example.proyectoapirest_tareas.viewmodel.TareaViewModel
 import com.example.proyectoapirest_tareas.viewmodel.UsuarioViewModel
@@ -136,6 +137,10 @@ object Api {
 
     suspend fun getAllTareas(token:String): Response<List<Tarea>> {
         return retrofitService.getAllTasks("Bearer $token")
+    }
+
+    suspend fun getUsers(token: String):Response<List<Usuario>> {
+        return retrofitService.getUsers("Bearer $token")
     }
 
 }

@@ -14,7 +14,7 @@ class TareaViewModel {
     private var tareasSinGuardar: SnapshotStateList<Tarea> = mutableStateListOf()
 
     private val _token = mutableStateOf("")
-    private val token: State<String> = _token
+    val token: State<String> = _token
 
     fun takeToken(token:String) {
         _token.value = token

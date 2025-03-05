@@ -25,6 +25,9 @@ interface APIService {
     @GET("usuarios/usuario")
     suspend fun getUser(@Header("Authorization") authResponse: String) :Response<Usuario>
 
+    @GET("usuarios/usuarios")
+    suspend fun getUsers(@Header("Authorization") authResponse: String) :Response<List<Usuario>>
+
     @GET("tarea/mostrarTodas")
     suspend fun getAllTasks(@Header("Authorization") authResponse: String) :Response<List<Tarea>>
 

@@ -13,12 +13,16 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -36,10 +40,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.proyectoapirest_tareas.api.Api
 import com.example.proyectoapirest_tareas.error.ErrorDialog
 import com.example.proyectoapirest_tareas.model.Tarea
+import com.example.proyectoapirest_tareas.model.Usuario
 import com.example.proyectoapirest_tareas.viewmodel.TareaViewModel
 import com.example.proyectoapirest_tareas.viewmodel.UsuarioViewModel
+import retrofit2.Response
 
 @Composable
 fun TareasScreen(usuarioViewModel: UsuarioViewModel, tareaViewModel: TareaViewModel) {
@@ -64,7 +71,7 @@ fun TareasScreen(usuarioViewModel: UsuarioViewModel, tareaViewModel: TareaViewMo
                         error = true
                         mensaje = it
                     })
-        }, onDismiss = {agregar = false}, usuarioViewModel)
+        }, onDismiss = {agregar = false}, usuarioViewModel, tareaViewModel.token.value)
     }
 
     Box(
@@ -113,11 +120,13 @@ fun TareasScreen(usuarioViewModel: UsuarioViewModel, tareaViewModel: TareaViewMo
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddDialog(onConfirm:(String, String, String)->Unit, onDismiss:()->Unit, usuarioViewModel: UsuarioViewModel) {
+fun AddDialog(onConfirm:(String, String, String)->Unit, onDismiss:()->Unit, usuarioViewModel: UsuarioViewModel, token:String) {
     var titulo by remember { mutableStateOf("") }
     var descripcion by remember { mutableStateOf("") }
     var creador by remember { mutableStateOf(usuarioViewModel.usuario.username) }
+    var expanded by remember { mutableStateOf(false) }
 
     AlertDialog(
         onDismissRequest = {},
@@ -138,12 +147,40 @@ fun AddDialog(onConfirm:(String, String, String)->Unit, onDismiss:()->Unit, usua
                     modifier = Modifier.fillMaxWidth()
                 )
                 Spacer(modifier = Modifier.height(8.dp))
-                OutlinedTextField(
-                    value = creador,
-                    onValueChange = { creador = it },
-                    label = { Text("Creador") },
-                    modifier = Modifier.fillMaxWidth()
-                )
+                if(usuarioViewModel.usuario.rol == "ADMIN"){
+                    ExposedDropdownMenuBox(
+                        expanded = expanded,
+                        onExpandedChange = { expanded = !expanded }
+                    ) {
+                        OutlinedTextField(
+                            value = creador,
+                            onValueChange = {},
+                            readOnly = true,
+                            label = { Text("Rol") },
+                            trailingIcon = {
+                                Icon(Icons.Default.ArrowDropDown, contentDescription = "Desplegar")
+                            },
+                            modifier = Modifier.menuAnchor()
+                        )
+
+                        ExposedDropdownMenu(
+                            expanded = expanded,
+                            onDismissRequest = { expanded = false }
+                        ) {
+                            val usuariosBD: Response<List<Usuario>> = Api.getUsers(token)
+                            val usuarios = usuariosBD.body()
+                            usuarios.forEach { option ->
+                                DropdownMenuItem(
+                                    text = { Text(option.username) },
+                                    onClick = {
+                                        creador = option.username
+                                        expanded = false
+                                    }
+                                )
+                            }
+                        }
+                    }
+                }
             }
         },
         confirmButton = {
