@@ -10,13 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.Button
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -38,21 +32,17 @@ import com.example.proyectoapirest_tareas.error.ErrorDialog
 import com.example.proyectoapirest_tareas.model.Direccion
 import com.example.proyectoapirest_tareas.viewmodel.UsuarioViewModel
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RegistroScreen(navController: NavHostController, usuarioViewModel: UsuarioViewModel) {
     var username by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var passwordRepeat by remember { mutableStateOf("") }
-    var rol by remember { mutableStateOf("USER") }
     var calle by remember { mutableStateOf("") }
     var num by remember { mutableStateOf("") }
     var municipio by remember { mutableStateOf("") }
     var provincia by remember { mutableStateOf("") }
     var cp by remember { mutableStateOf("") }
-    var expanded by remember { mutableStateOf(false) }
-    val roles = listOf("USER", "ADMIN")
     var error by remember { mutableStateOf(false) }
     var message by remember { mutableStateOf("") }
 

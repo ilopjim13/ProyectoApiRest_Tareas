@@ -1,9 +1,7 @@
 package com.example.proyectoapirest_tareas.viewmodel
 
 import android.util.Patterns
-import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import com.example.proyectoapirest_tareas.api.Api.retrofitService
 import com.example.proyectoapirest_tareas.dto.UsuarioRegisterDTO
@@ -18,8 +16,17 @@ class UsuarioViewModel(private val tareaViewModel: TareaViewModel) {
 
     var usuarios: SnapshotStateList<Usuario> = mutableStateListOf()
 
-    private var _isError = mutableStateOf(false)
-    val isError: State<Boolean> = _isError
+    private var _username = MutableStateFlow("")
+    val username: StateFlow<String> = _username
+
+    private var _pass = MutableStateFlow("")
+    val pass: StateFlow<String> = _pass
+
+    private var _isError = MutableStateFlow(false)
+    val isError: StateFlow<Boolean> = _isError
+
+    private var _messageError = MutableStateFlow("")
+    val messageError: StateFlow<String> = _messageError
 
     private var _isLogged = MutableStateFlow(false)
     val isLogged: StateFlow<Boolean> = _isLogged
@@ -36,6 +43,22 @@ class UsuarioViewModel(private val tareaViewModel: TareaViewModel) {
         listUsuarios.body()?.forEach {
             usuarios.add(it)
         }
+    }
+
+    fun changeLogin(username:String, pass:String) {
+        _username.value = username
+        _pass.value = pass
+    }
+
+    fun openError(error:String) {
+        _isError.value = true
+        _messageError.value = error
+    }
+
+    fun closeError() {
+        _isError.value = false
+        _messageError.value = ""
+
     }
 
     fun closeSession(){

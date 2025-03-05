@@ -1,7 +1,6 @@
 package com.example.proyectoapirest_tareas.screen
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,12 +17,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -36,18 +31,16 @@ import com.example.proyectoapirest_tareas.navigation.Tareas
 import com.example.proyectoapirest_tareas.viewmodel.TareaViewModel
 import com.example.proyectoapirest_tareas.viewmodel.UsuarioViewModel
 
-
 @Composable
 fun LoginScreen(modifier: Modifier = Modifier,usuarioViewModel:UsuarioViewModel, tareaViewModel: TareaViewModel, navHostController: NavController) {
-    var username by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
+    val username by usuarioViewModel.username.collectAsState("")
+    val password by usuarioViewModel.pass.collectAsState("")
     val logeado by usuarioViewModel.isLogged.collectAsState(false)
-    var error by remember { mutableStateOf(false) }
-    var message by remember { mutableStateOf("") }
+    val error by usuarioViewModel.isError.collectAsState(false)
+    val message by usuarioViewModel.messageError.collectAsState("")
 
     if (error) ErrorDialog(message) {
-        error = false
-        message = ""
+        usuarioViewModel.closeError()
     }
 
     Box(Modifier.fillMaxSize()) {
@@ -70,7 +63,7 @@ fun LoginScreen(modifier: Modifier = Modifier,usuarioViewModel:UsuarioViewModel,
 
             OutlinedTextField(
                 value = username,
-                onValueChange = { username = it},
+                onValueChange = { usuarioViewModel.changeLogin(it, password)},
                 label = { Text("Usuario") },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true
@@ -79,7 +72,7 @@ fun LoginScreen(modifier: Modifier = Modifier,usuarioViewModel:UsuarioViewModel,
 
             OutlinedTextField(
                 value = password,
-                onValueChange = { password = it },
+                onValueChange = { usuarioViewModel.changeLogin(username, it) },
                 label =  { Text("Contraseña") },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true
@@ -89,12 +82,10 @@ fun LoginScreen(modifier: Modifier = Modifier,usuarioViewModel:UsuarioViewModel,
                 Button(onClick = {
                     if (username.isNotBlank() && password.isNotBlank()) {
                         getToken(username, password, usuarioViewModel, tareaViewModel) {
-                            error = true
-                            message = it
+                            usuarioViewModel.openError(it)
                         }
                     } else {
-                        error = true
-                        message = "Debes rellenar los campos."
+                        usuarioViewModel.openError("Debes rellenar los campos.")
                     }
                 }) {
                     Text("Iniciar sesión")

@@ -12,6 +12,9 @@ import androidx.navigation.compose.rememberNavController
 import com.example.proyectoapirest_tareas.navigation.AppTareas
 import com.example.proyectoapirest_tareas.ui.theme.ProyectoApiRest_TareasTheme
 
+/**
+ * Clase principal donde ejecutaremos el Navigation
+ */
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

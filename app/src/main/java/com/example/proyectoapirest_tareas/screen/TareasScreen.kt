@@ -17,7 +17,6 @@ import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -33,6 +32,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -50,24 +50,21 @@ import com.example.proyectoapirest_tareas.R
 import com.example.proyectoapirest_tareas.api.Api
 import com.example.proyectoapirest_tareas.error.ErrorDialog
 import com.example.proyectoapirest_tareas.model.Tarea
-import com.example.proyectoapirest_tareas.model.Usuario
 import com.example.proyectoapirest_tareas.navigation.Login
 import com.example.proyectoapirest_tareas.viewmodel.TareaViewModel
 import com.example.proyectoapirest_tareas.viewmodel.UsuarioViewModel
-import retrofit2.Response
 
 @Composable
 fun TareasScreen(usuarioViewModel: UsuarioViewModel, tareaViewModel: TareaViewModel, navHost: NavHostController) {
 
     val tareas = remember { tareaViewModel.tareas }
     var agregar by remember { mutableStateOf(false) }
-    var error by remember { mutableStateOf(false) }
-    var mensaje by remember { mutableStateOf("") }
+    val error by usuarioViewModel.isError.collectAsState(false)
+    val message by usuarioViewModel.messageError.collectAsState("")
 
     if (error) {
-        ErrorDialog(mensaje) {
-            error = false
-            mensaje = ""
+        ErrorDialog(message) {
+            usuarioViewModel.closeError()
         }
     }
 
@@ -76,8 +73,7 @@ fun TareasScreen(usuarioViewModel: UsuarioViewModel, tareaViewModel: TareaViewMo
             if (titulo.isNotBlank() && desc.isNotBlank())
                 tareaViewModel.addTask(titulo, desc, creador,
                     onDismiss = {
-                        error = true
-                        mensaje = it
+                        usuarioViewModel.openError(it)
                     })
         }, onDismiss = {agregar = false}, usuarioViewModel, tareaViewModel.token.value)
     }
