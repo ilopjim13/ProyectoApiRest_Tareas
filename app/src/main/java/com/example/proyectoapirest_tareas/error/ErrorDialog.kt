@@ -15,26 +15,30 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 
+/**
+ * Muestra un dialog de error con un mensaje y un botón de confirmación.
+ */
 @Composable
 fun ErrorDialog(message:String, onDismiss: () -> Unit) {
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = {
+        title = { // Encabezado del diálogo con el título "Error" y un botón para cerrar
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(text = "Error", fontWeight = FontWeight.Bold)
+                Text(text = "Error", fontWeight = FontWeight.Bold) // Texto en negrita para resaltar el título
+                // Botón de cierre con un icono "X"
                 IconButton(onClick = onDismiss) {
                     Icon(imageVector = Icons.Default.Close, contentDescription = "Cerrar")
                 }
             }
         },
-        text = {
+        text = { // Cuerpo del diálogo donde se muestra el mensaje de error
             Text(text = message)
         },
-        confirmButton = {
+        confirmButton = { // Botón de confirmación que cierra el diálogo
             Button(onClick = onDismiss) {
                 Text("Aceptar")
             }

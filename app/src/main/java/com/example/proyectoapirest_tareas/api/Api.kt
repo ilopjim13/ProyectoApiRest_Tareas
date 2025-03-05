@@ -20,14 +20,21 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.Date
 
+/**
+ * Objeto que gestiona la comunicación con la API mediante Retrofit. Proporciona métodos para
+ * la autenticación, registro de usuarios y gestión de tareas.
+ */
 object Api {
 
+    /** URL base del servidor para realizar las peticiones. */
     private const val BASE_URL = "http://10.0.2.2:8080/"
 
+    /** Instancia de Retrofit configurada con la base URL y el conversor Gson. */
     val retrofitService:APIService by lazy {
         getRetrofit().create(APIService::class.java)
     }
 
+    /** Configura y devuelve una instancia de Retrofit. */
     private fun getRetrofit():Retrofit {
         return Retrofit.Builder()
             .baseUrl(BASE_URL)
@@ -35,6 +42,10 @@ object Api {
             .build()
     }
 
+    /**
+     * Realiza la autenticación de un usuario, obteniendo un token si las credenciales son correctas.
+     * En caso de éxito, almacena el token y actualiza el estado del usuario en la aplicación.
+     */
     fun getToken(username:String, pass:String, usuarioViewModel: UsuarioViewModel, tareaViewModel: TareaViewModel, onDismiss:(String)-> Unit) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
@@ -62,7 +73,10 @@ object Api {
         }
     }
 
-
+    /**
+     * Registra un nuevo usuario en el sistema.
+     * En caso de éxito, muestra un mensaje en el log con la confirmación del registro.
+     */
     fun onRegisterClick(usuario: UsuarioRegisterDTO, onDismiss:(String)-> Unit):Boolean {
         var registrado = false
         CoroutineScope(Dispatchers.IO).launch {
@@ -87,6 +101,10 @@ object Api {
         return registrado
     }
 
+    /**
+     * Sincroniza el estado de las tareas no guardadas con el servidor.
+     * Actualiza el estado de las tareas modificadas y elimina aquellas que ya no están en la lista.
+     */
     fun save(tareasSinGuardar:List<Tarea>, tareas:List<Tarea>, token:String) {
         CoroutineScope(Dispatchers.IO).launch {
             tareasSinGuardar.forEach {
@@ -102,6 +120,10 @@ object Api {
         }
     }
 
+    /**
+     * Agrega una nueva tarea al usuario autenticado si no existe una con el mismo título y creador.
+     * En caso de error, maneja las excepciones adecuadas según la respuesta del servidor.
+     */
     fun addTask(titulo:String, desc:String, creador:String, tareas: MutableList<Tarea>, token: String, onDismiss:(String) -> Unit) {
         CoroutineScope(Dispatchers.IO).launch {
             val tarea = TareaAddDTO(titulo, desc)
@@ -130,14 +152,23 @@ object Api {
         }
     }
 
+    /**
+     * Obtiene la lista de tareas asociadas a un usuario autenticado.
+     */
     suspend fun getTareas(token:String, username: String): Response<List<Tarea>> {
         return retrofitService.getTasks("Bearer $token", username)
     }
 
+    /**
+     * Obtiene la lista de todas las tareas disponibles en el sistema.
+     */
     suspend fun getAllTareas(token:String): Response<List<Tarea>> {
         return retrofitService.getAllTasks("Bearer $token")
     }
 
+    /**
+     * Obtiene la lista de usuarios registrados y actualiza el estado en el ViewModel correspondiente.
+     */
     fun getUsers(token: String, usuarioViewModel: UsuarioViewModel) {
         CoroutineScope(Dispatchers.IO).launch {
             val listaUsuarios = retrofitService.getUsers("Bearer $token")
