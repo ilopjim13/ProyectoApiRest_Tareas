@@ -167,8 +167,8 @@ fun AddDialog(onConfirm:(String, String, String)->Unit, onDismiss:()->Unit, usua
                             expanded = expanded,
                             onDismissRequest = { expanded = false }
                         ) {
-                            val usuariosBD: Response<List<Usuario>> = Api.getUsers(token)
-                            val usuarios = usuariosBD.body()
+                            if (usuarioViewModel.usuarios.isEmpty()) Api.getUsers(token, usuarioViewModel)
+                            val usuarios = usuarioViewModel.usuarios
                             usuarios.forEach { option ->
                                 DropdownMenuItem(
                                     text = { Text(option.username) },

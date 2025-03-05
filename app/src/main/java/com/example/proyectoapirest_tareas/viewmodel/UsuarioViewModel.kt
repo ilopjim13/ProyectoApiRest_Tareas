@@ -2,16 +2,21 @@ package com.example.proyectoapirest_tareas.viewmodel
 
 import android.util.Patterns
 import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import com.example.proyectoapirest_tareas.api.Api.retrofitService
 import com.example.proyectoapirest_tareas.dto.UsuarioRegisterDTO
 import com.example.proyectoapirest_tareas.model.Usuario
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import retrofit2.Response
 
 class UsuarioViewModel(private val tareaViewModel: TareaViewModel) {
 
     var usuario: Usuario = Usuario("", "", "")
+
+    var usuarios: SnapshotStateList<Usuario> = mutableStateListOf()
 
     private var _isError = mutableStateOf(false)
     val isError: State<Boolean> = _isError
@@ -24,6 +29,12 @@ class UsuarioViewModel(private val tareaViewModel: TareaViewModel) {
         if (user.isSuccessful) {
             usuario = user.body() ?: Usuario("", "", "")
             tareaViewModel.loadList(usuario, token)
+        }
+    }
+
+    fun getUsers(listUsuarios: Response<List<Usuario>>) {
+        listUsuarios.body()?.forEach {
+            usuarios.add(it)
         }
     }
 

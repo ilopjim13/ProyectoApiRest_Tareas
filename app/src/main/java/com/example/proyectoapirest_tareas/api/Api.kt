@@ -139,8 +139,13 @@ object Api {
         return retrofitService.getAllTasks("Bearer $token")
     }
 
-    suspend fun getUsers(token: String):Response<List<Usuario>> {
-        return retrofitService.getUsers("Bearer $token")
+    fun getUsers(token: String, usuarioViewModel: UsuarioViewModel) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val listaUsuarios = retrofitService.getUsers("Bearer $token")
+            if(listaUsuarios.isSuccessful) {
+                usuarioViewModel.getUsers(listaUsuarios)
+            }
+        }
     }
 
 }
