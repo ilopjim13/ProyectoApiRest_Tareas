@@ -31,7 +31,7 @@ fun AppTareas(modifier:Modifier = Modifier, navigationController: NavHostControl
             RegistroScreen(navigationController, usuarioViewModel)
         }
         composable<Tareas> {
-            TareasScreen(usuarioViewModel, tareaViewModel)
+            TareasScreen(usuarioViewModel, tareaViewModel, navigationController)
         }
     }
 }

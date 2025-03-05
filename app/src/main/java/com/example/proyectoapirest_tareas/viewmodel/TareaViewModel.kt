@@ -10,7 +10,7 @@ import com.example.proyectoapirest_tareas.model.Usuario
 
 class TareaViewModel {
 
-    val tareas: SnapshotStateList<Tarea> = mutableStateListOf()
+    var tareas: SnapshotStateList<Tarea> = mutableStateListOf()
     private var tareasSinGuardar: SnapshotStateList<Tarea> = mutableStateListOf()
 
     private val _token = mutableStateOf("")
@@ -41,6 +41,12 @@ class TareaViewModel {
                 }
             }
         }
+    }
+
+    fun closeSession(){
+        _token.value = ""
+        tareas = mutableStateListOf()
+        tareasSinGuardar = mutableStateListOf()
     }
 
     fun save() {

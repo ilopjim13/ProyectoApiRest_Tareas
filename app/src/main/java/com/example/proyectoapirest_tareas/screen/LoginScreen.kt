@@ -1,6 +1,9 @@
 package com.example.proyectoapirest_tareas.screen
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -20,8 +23,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.proyectoapirest_tareas.R
 import com.example.proyectoapirest_tareas.api.Api.getToken
 import com.example.proyectoapirest_tareas.error.ErrorDialog
 import com.example.proyectoapirest_tareas.navigation.Registro
@@ -43,46 +50,66 @@ fun LoginScreen(modifier: Modifier = Modifier,usuarioViewModel:UsuarioViewModel,
         message = ""
     }
 
-    Column(modifier.fillMaxSize().padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
-        OutlinedTextField(
-            value = username,
-            onValueChange = { username = it},
-            label = { Text("Usuario") },
-            modifier = Modifier.fillMaxWidth(),
-            singleLine = true
-        )
-        Spacer(modifier = Modifier.height(16.dp))
+    Box(Modifier.fillMaxSize()) {
 
-        OutlinedTextField(
-            value = password,
-            onValueChange = { password = it },
-            label =  { Text("Contraseña") },
-            modifier = Modifier.fillMaxWidth(),
-            singleLine = true
+        Image(
+            painter = painterResource(R.drawable.fondo),
+            contentDescription = "fondo",
+            Modifier.fillMaxSize(),
+            contentScale = ContentScale.Crop
         )
-        Spacer(modifier = Modifier.height(24.dp))
-        Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceEvenly) {
-            Button(onClick = {
-                if (username.isNotBlank() && password.isNotBlank()) {
-                    getToken(username, password, usuarioViewModel, tareaViewModel) {
+
+        Column(modifier.fillMaxSize().padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
+
+
+            Image(
+                painter = painterResource(R.drawable.icono),
+                contentDescription = "Icono"
+            )
+
+
+            OutlinedTextField(
+                value = username,
+                onValueChange = { username = it},
+                label = { Text("Usuario") },
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+
+            OutlinedTextField(
+                value = password,
+                onValueChange = { password = it },
+                label =  { Text("Contraseña") },
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true
+            )
+            Spacer(modifier = Modifier.height(24.dp))
+            Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceEvenly) {
+                Button(onClick = {
+                    if (username.isNotBlank() && password.isNotBlank()) {
+                        getToken(username, password, usuarioViewModel, tareaViewModel) {
+                            error = true
+                            message = it
+                        }
+                    } else {
                         error = true
-                        message = it
+                        message = "Debes rellenar los campos."
                     }
-                } else {
-                    error = true
-                    message = "Debes rellenar los campos."
+                }) {
+                    Text("Iniciar sesión")
                 }
-            }) {
-                Text("INICIAR SESIÓN")
+                Button(onClick = {
+                    navHostController.navigate(Registro)
+                }) {
+                    Text("Registrarse")
+                }
             }
-            Button(onClick = {
-                navHostController.navigate(Registro)
-            }) {
-                Text("REGISTRARSE")
+            LaunchedEffect(logeado) {
+                if (logeado) navHostController.navigate(Tareas)
             }
-        }
-        LaunchedEffect(logeado) {
-            if (logeado) navHostController.navigate(Tareas)
         }
     }
+
+
 }

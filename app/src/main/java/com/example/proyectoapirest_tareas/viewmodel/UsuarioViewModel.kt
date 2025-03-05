@@ -38,6 +38,12 @@ class UsuarioViewModel(private val tareaViewModel: TareaViewModel) {
         }
     }
 
+    fun closeSession(){
+        usuario = Usuario("", "","")
+        _isLogged.value = false
+        _isError.value = false
+    }
+
     fun isLoggin(bool: Boolean) {
         _isLogged.value = bool
     }

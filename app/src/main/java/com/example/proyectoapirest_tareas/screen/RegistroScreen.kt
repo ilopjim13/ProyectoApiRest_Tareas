@@ -1,6 +1,8 @@
 package com.example.proyectoapirest_tareas.screen
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -24,9 +26,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.example.proyectoapirest_tareas.R
 import com.example.proyectoapirest_tareas.api.Api.onRegisterClick
 import com.example.proyectoapirest_tareas.dto.UsuarioRegisterDTO
 import com.example.proyectoapirest_tareas.error.ErrorDialog
@@ -59,81 +64,59 @@ fun RegistroScreen(navController: NavHostController, usuarioViewModel: UsuarioVi
         }
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        OutlinedTextField(value = username, onValueChange = { username = it }, singleLine = true, label = { Text("Usuario") })
-        OutlinedTextField(value = email, onValueChange = { email = it }, singleLine = true, label = { Text("Email") })
-        OutlinedTextField(value = password, onValueChange = { password = it }, singleLine = true, label = { Text("Contraseña") }, visualTransformation = PasswordVisualTransformation())
-        OutlinedTextField(value = passwordRepeat, onValueChange = { passwordRepeat = it }, singleLine = true, label = { Text("Repetir Contraseña") }, visualTransformation = PasswordVisualTransformation())
+    Image(
+        painter = painterResource(R.drawable.fondo),
+        contentDescription = "fondo",
+        Modifier.fillMaxSize(),
+        contentScale = ContentScale.Crop
+    )
 
-        ExposedDropdownMenuBox(
-            expanded = expanded,
-            onExpandedChange = { expanded = !expanded }
+    Box(Modifier.fillMaxWidth()) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            OutlinedTextField(
-                value = rol,
-                onValueChange = {},
-                readOnly = true,
-                label = { Text("Rol") },
-                trailingIcon = {
-                    Icon(Icons.Default.ArrowDropDown, contentDescription = "Desplegar")
-                },
-                modifier = Modifier.menuAnchor()
-            )
+            OutlinedTextField(value = username, onValueChange = { username = it }, singleLine = true, label = { Text("Usuario") })
+            OutlinedTextField(value = email, onValueChange = { email = it }, singleLine = true, label = { Text("Email") })
+            OutlinedTextField(value = password, onValueChange = { password = it }, singleLine = true, label = { Text("Contraseña") }, visualTransformation = PasswordVisualTransformation())
+            OutlinedTextField(value = passwordRepeat, onValueChange = { passwordRepeat = it }, singleLine = true, label = { Text("Repetir Contraseña") }, visualTransformation = PasswordVisualTransformation())
+            OutlinedTextField(value = calle, onValueChange = { calle = it }, singleLine = true, label = { Text("Calle") })
+            OutlinedTextField(value = num, onValueChange = { num = it }, singleLine = true, label = { Text("Número") })
+            OutlinedTextField(value = municipio, onValueChange = { municipio = it }, singleLine = true, label = { Text("Municipio") })
+            OutlinedTextField(value = provincia, onValueChange = { provincia = it }, singleLine = true, label = { Text("Provincia") })
+            OutlinedTextField(value = cp, onValueChange = { cp = it }, singleLine = true, label = { Text("Código Postal") })
 
-            ExposedDropdownMenu(
-                expanded = expanded,
-                onDismissRequest = { expanded = false }
-            ) {
-                roles.forEach { option ->
-                    DropdownMenuItem(
-                        text = { Text(option) },
-                        onClick = {
-                            rol = option
-                            expanded = false
-                        }
-                    )
-                }
-            }
-        }
-        OutlinedTextField(value = calle, onValueChange = { calle = it }, singleLine = true, label = { Text("Calle") })
-        OutlinedTextField(value = num, onValueChange = { num = it }, singleLine = true, label = { Text("Número") })
-        OutlinedTextField(value = municipio, onValueChange = { municipio = it }, singleLine = true, label = { Text("Municipio") })
-        OutlinedTextField(value = provincia, onValueChange = { provincia = it }, singleLine = true, label = { Text("Provincia") })
-        OutlinedTextField(value = cp, onValueChange = { cp = it }, singleLine = true, label = { Text("Código Postal") })
+            Spacer(modifier = Modifier.height(16.dp))
 
-        Spacer(modifier = Modifier.height(16.dp))
+            Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceEvenly) {
+                Button(onClick = {
+                    val direccion = Direccion(calle, num, municipio, provincia, cp)
+                    val usuario = UsuarioRegisterDTO(username, email, password, passwordRepeat, "USER", direccion)
+                    if (usuarioViewModel.checkUser(usuario)) {
+                        if (onRegisterClick(usuario) {
+                                error = true
+                                message = it
+                            })navController.popBackStack()
 
-        Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceEvenly) {
-            Button(onClick = {
-                val direccion = Direccion(calle, num, municipio, provincia, cp)
-                val usuario = UsuarioRegisterDTO(username, email, password, passwordRepeat, rol, direccion)
-                if (usuarioViewModel.checkUser(usuario)) {
-                    if (onRegisterClick(usuario) {
+
+                    }
+                    else {
                         error = true
-                        message = it
-                    })navController.popBackStack()
+                        message = "Error en los campos introducidos. Comprueba que todos los datos estén introducidos, el email sea correcto, y la contraseña sea mayor o igual a 4 dígitos"
+                    }
+                }) {
+                    Text("Registrarse")
+                }
+                Button(onClick = {navController.popBackStack()}) {
+                    Text("Iniciar Sesión")
+                }
+            }
 
 
-                }
-                else {
-                    error = true
-                    message = "Error en los campos introducidos. Comprueba que todos los datos estén introducidos, el email sea correcto, y la contraseña sea mayor o igual a 4 dígitos"
-                }
-            }) {
-                Text("Registrarse")
-            }
-            Button(onClick = {navController.popBackStack()}) {
-                Text("Iniciar Sesión")
-            }
         }
-
-
     }
 }
 

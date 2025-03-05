@@ -1,5 +1,6 @@
 package com.example.proyectoapirest_tareas.screen
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,9 +13,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -37,19 +40,24 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
+import com.example.proyectoapirest_tareas.R
 import com.example.proyectoapirest_tareas.api.Api
 import com.example.proyectoapirest_tareas.error.ErrorDialog
 import com.example.proyectoapirest_tareas.model.Tarea
 import com.example.proyectoapirest_tareas.model.Usuario
+import com.example.proyectoapirest_tareas.navigation.Login
 import com.example.proyectoapirest_tareas.viewmodel.TareaViewModel
 import com.example.proyectoapirest_tareas.viewmodel.UsuarioViewModel
 import retrofit2.Response
 
 @Composable
-fun TareasScreen(usuarioViewModel: UsuarioViewModel, tareaViewModel: TareaViewModel) {
+fun TareasScreen(usuarioViewModel: UsuarioViewModel, tareaViewModel: TareaViewModel, navHost: NavHostController) {
 
     val tareas = remember { tareaViewModel.tareas }
     var agregar by remember { mutableStateOf(false) }
@@ -77,20 +85,56 @@ fun TareasScreen(usuarioViewModel: UsuarioViewModel, tareaViewModel: TareaViewMo
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
+
     ) {
+
+        Image(
+            painter = painterResource(R.drawable.circulitos),
+            contentDescription = "fondo",
+            Modifier.fillMaxSize(),
+            contentScale = ContentScale.Crop
+        )
 
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(bottom = 56.dp, top = 20.dp),
+                .padding(bottom = 72.dp, top = 32.dp, start = 16.dp, end = 16.dp ),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            Text(text = "Lista de tareas", fontSize = 30.sp)
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 16.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+
+            ) {
+                Text(text = "Lista de tareas", fontSize = 30.sp)
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 16.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.End
+
+                )  {
+                    IconButton({
+                        navHost.navigate(Login)
+                        usuarioViewModel.closeSession()
+                        tareaViewModel.closeSession()
+                    }) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ExitToApp,
+                            contentDescription = ""
+                        )
+                    }
+                }
+            }
+
 
             LazyColumn(
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier.fillMaxSize().padding(top = 16.dp, bottom = 16.dp)
             ) {
                 items(tareas.size) { index ->
                     ListItem(tareas[index], tareaViewModel)
@@ -103,7 +147,7 @@ fun TareasScreen(usuarioViewModel: UsuarioViewModel, tareaViewModel: TareaViewMo
             containerColor = Color.LightGray,
             contentColor = Color.Black,
             shape = CircleShape,
-            modifier = Modifier.align(Alignment.BottomEnd).padding(bottom = 78.dp, end = 16.dp)
+            modifier = Modifier.align(Alignment.BottomEnd).padding(bottom = 94.dp, end = 32.dp)
             ) {
             Icon(imageVector = Icons.Filled.Add, contentDescription = "Añadir tarea")
         }
@@ -113,7 +157,7 @@ fun TareasScreen(usuarioViewModel: UsuarioViewModel, tareaViewModel: TareaViewMo
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .fillMaxWidth()
-                .padding(bottom = 16.dp)
+                .padding(bottom = 32.dp, end = 16.dp, start = 16.dp)
         ) {
             Text(text = "Guardar")
         }
