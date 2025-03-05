@@ -27,10 +27,6 @@ class UsuarioViewModel(private val tareaViewModel: TareaViewModel) {
         }
     }
 
-    fun showError(bool: Boolean) {
-        _isError.value = bool
-    }
-
     fun isLoggin(bool: Boolean) {
         _isLogged.value = bool
     }
