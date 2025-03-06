@@ -146,6 +146,7 @@ fun Botones(
         }
         Button(onClick = {
             navHostController.navigate(Registro) // Navega hasta la pantalla Registro
+            usuarioViewModel.resetLogin() // Reseteamos las variables del login
         }) {
             Text("Registrarse")
         }
