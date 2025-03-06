@@ -27,7 +27,7 @@ import java.util.Date
 object Api {
 
     /** URL base del servidor para realizar las peticiones. */
-    private const val BASE_URL = "http://10.0.2.2:8080/"
+    private const val BASE_URL = "https://apirest-tareas.onrender.com/"
 
     /** Instancia de Retrofit configurada con la base URL y el conversor Gson. */
     val retrofitService:APIService by lazy {
