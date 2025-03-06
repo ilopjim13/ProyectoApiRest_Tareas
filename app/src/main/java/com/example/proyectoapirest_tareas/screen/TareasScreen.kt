@@ -182,7 +182,7 @@ fun AddDialog(onConfirm:(String, String, String)->Unit, onDismiss:()->Unit, usua
                             value = creador,
                             onValueChange = {},
                             readOnly = true,
-                            label = { Text("Rol") },
+                            label = { Text("Creador") },
                             trailingIcon = {
                                 Icon(Icons.Default.ArrowDropDown, contentDescription = "Desplegar")
                             },
